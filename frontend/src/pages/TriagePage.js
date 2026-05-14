@@ -16,7 +16,10 @@ export default function TriagePage() {
       { header: 'Chief Complaint', render: r => (r.chiefComplaint || '').substring(0, 40) + '...' },
       { header: 'Pain', render: r => `${r.painLevel}/10` },
       { header: 'Triage Level', render: r => triageBadge(r.triageLevel) },
-      { header: 'AI Confidence', render: r => r.aiConfidence ? `${(r.aiConfidence * 100).toFixed(0)}%` : '-' }
+      { header: 'AI Confidence', render: r => r.aiConfidence ? `${(r.aiConfidence * 100).toFixed(0)}%` : '-' },
+      { header: 'AI Rec', render: r => r.aiRecommendation
+        ? <span className="badge badge-info" title={r.aiRecommendation}>AI</span>
+        : <span style={{ color: '#475569', fontSize: '12px' }}>-</span> }
     ]}
     formFields={[
       { key: 'patientId', label: 'Patient ID', type: 'number' },
