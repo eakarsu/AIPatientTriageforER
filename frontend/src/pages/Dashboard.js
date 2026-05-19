@@ -18,6 +18,9 @@ const features = [
   { path: '/alerts', icon: '🚨', title: 'Emergency Alerts', desc: 'Real-time emergency alert management', color: '#ef4444', countKey: 'activeAlerts' },
   { path: '/beds', icon: '🛏️', title: 'Bed Management', desc: 'AI-optimized bed allocation', color: '#06b6d4', countKey: 'occupiedBeds' },
   { path: '/patient-flow', icon: '📊', title: 'Patient Flow Analytics', desc: 'AI predictive analytics & insights', color: '#8b5cf6' },
+  { path: '/esi-calculator', icon: '⚡', title: 'ESI Calculator', desc: 'AI Emergency Severity Index scoring 1-5 with rationale', color: '#ef4444' },
+  { path: '/resource-predictor', icon: '📈', title: 'Resource Predictor', desc: '2-hour AI forecast for beds, staff & supplies', color: '#10b981' },
+  { path: '/med-safety', icon: '🛡️', title: 'Medication Safety', desc: 'Drug interaction, allergy & dosage safety checks', color: '#3b82f6' },
 ];
 
 export default function Dashboard() {

@@ -252,6 +252,25 @@ const PatientFlow = sequelize.define('PatientFlow', {
   aiBottleneckAnalysis: { type: DataTypes.TEXT }
 }, { tableName: 'patient_flow', timestamps: true });
 
+// AI Results Model - persists all AI endpoint results
+const AiResult = sequelize.define('AiResult', {
+  id: { type: DataTypes.INTEGER, primaryKey: true, autoIncrement: true },
+  userId: { type: DataTypes.INTEGER },
+  endpoint: { type: DataTypes.STRING(100) },
+  patientId: { type: DataTypes.INTEGER },
+  result: { type: DataTypes.TEXT },
+  model: { type: DataTypes.STRING(100) }
+}, { tableName: 'ai_results', timestamps: true });
+
+// Audit Log Model - HIPAA-compliant access logging
+const AuditLog = sequelize.define('AuditLog', {
+  id: { type: DataTypes.INTEGER, primaryKey: true, autoIncrement: true },
+  action: { type: DataTypes.STRING(100), allowNull: false },
+  userId: { type: DataTypes.INTEGER },
+  patientId: { type: DataTypes.INTEGER },
+  ipAddress: { type: DataTypes.STRING(50) }
+}, { tableName: 'audit_logs', timestamps: true });
+
 // Associations
 Patient.hasMany(TriageAssessment, { foreignKey: 'patientId' });
 TriageAssessment.belongsTo(Patient, { foreignKey: 'patientId' });
@@ -303,5 +322,7 @@ module.exports = {
   Discharge,
   EmergencyAlert,
   BedManagement,
-  PatientFlow
+  PatientFlow,
+  AiResult,
+  AuditLog
 };

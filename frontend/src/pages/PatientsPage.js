@@ -10,11 +10,22 @@ export default function PatientsPage() {
   const [showModal, setShowModal] = useState(false);
   const [formData, setFormData] = useState({});
   const [editing, setEditing] = useState(false);
+  const [page, setPage] = useState(1);
+  const [pagination, setPagination] = useState({ total: 0, totalPages: 1 });
 
-  useEffect(() => { fetchData(); }, []);
+  useEffect(() => { fetchData(); }, [page]);
 
   const fetchData = async () => {
-    try { const { data } = await API.get('/patients'); setItems(data); } catch (e) { toast.error('Failed to load patients'); }
+    try {
+      const { data } = await API.get(`/patients?page=${page}&limit=20`);
+      // Support both paginated {data, pagination} and plain array
+      if (Array.isArray(data)) {
+        setItems(data);
+      } else {
+        setItems(data.data || []);
+        setPagination(data.pagination || { total: 0, totalPages: 1 });
+      }
+    } catch (e) { toast.error('Failed to load patients'); }
   };
 
   const handleSave = async () => {
@@ -82,6 +93,16 @@ export default function PatientsPage() {
         <button className="btn-primary" onClick={openNew}>+ New Patient</button>
       </div>
       <DataTable columns={columns} data={items} onRowClick={setSelected} />
+
+      {/* Pagination */}
+      {pagination.totalPages > 1 && (
+        <div style={{ display: 'flex', justifyContent: 'center', gap: '8px', marginTop: '16px' }}>
+          <button className="btn-secondary" onClick={() => setPage(p => Math.max(1, p - 1))} disabled={page === 1}>Previous</button>
+          <span style={{ padding: '8px 16px', color: '#94a3b8', alignSelf: 'center' }}>Page {page} of {pagination.totalPages} ({pagination.total} total)</span>
+          <button className="btn-secondary" onClick={() => setPage(p => Math.min(pagination.totalPages, p + 1))} disabled={page === pagination.totalPages}>Next</button>
+        </div>
+      )}
+
       {showModal && (
         <Modal title={editing ? 'Edit Patient' : 'Register New Patient'} onClose={() => setShowModal(false)}>
           <div className="form-row">

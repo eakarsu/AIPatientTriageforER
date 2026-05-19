@@ -14,11 +14,21 @@ export default function CrudPage({ title, apiPath, columns, formFields, detailFi
   const [aiResult, setAiResult] = useState(null);
   const [aiLoading, setAiLoading] = useState(false);
   const [aiModel, setAiModel] = useState('');
+  const [page, setPage] = useState(1);
+  const [pagination, setPagination] = useState({ total: 0, totalPages: 1 });
 
-  useEffect(() => { fetchData(); }, []);
+  useEffect(() => { fetchData(); }, [page]);
 
   const fetchData = async () => {
-    try { const { data } = await API.get(apiPath); setItems(data); } catch (e) { toast.error(`Failed to load data`); }
+    try {
+      const { data } = await API.get(`${apiPath}?page=${page}&limit=20`);
+      if (Array.isArray(data)) {
+        setItems(data);
+      } else {
+        setItems(data.data || []);
+        setPagination(data.pagination || { total: 0, totalPages: 1 });
+      }
+    } catch (e) { toast.error(`Failed to load data`); }
   };
 
   const handleSave = async () => {
@@ -117,6 +127,16 @@ export default function CrudPage({ title, apiPath, columns, formFields, detailFi
         <button className="btn-primary" onClick={openNew}>+ New Record</button>
       </div>
       <DataTable columns={columns} data={items} onRowClick={setSelected} />
+
+      {/* Pagination */}
+      {pagination.totalPages > 1 && (
+        <div style={{ display: 'flex', justifyContent: 'center', gap: '8px', marginTop: '16px' }}>
+          <button className="btn-secondary" onClick={() => setPage(p => Math.max(1, p - 1))} disabled={page === 1}>Previous</button>
+          <span style={{ padding: '8px 16px', color: '#94a3b8', alignSelf: 'center' }}>Page {page} of {pagination.totalPages}</span>
+          <button className="btn-secondary" onClick={() => setPage(p => Math.min(pagination.totalPages, p + 1))} disabled={page === pagination.totalPages}>Next</button>
+        </div>
+      )}
+
       {showModal && (
         <Modal title={editing ? `Edit ${title}` : `New ${title}`} onClose={() => setShowModal(false)}>
           {formFields.filter(f => !f.hideInForm).map(f => renderFormField(f))}
