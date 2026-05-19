@@ -25,6 +25,7 @@ const navItems = [
   { path: '/med-safety', icon: <FiShield />, label: 'Medication Safety' },
   { path: '/ai-history', icon: <FiCpu />, label: 'AI History' },
   { path: '/ai-predictive', icon: <FiBarChart2 />, label: 'AI Predictive' },
+  { path: '/custom-views', icon: <FiGrid />, label: 'ER Views' },
   // === Batch 06 Gaps & Frontend Mounts ===
   { path: '/cf-agentic-er-flow-optimization', label: 'Agentic ER flow optimization', icon: '✨' },
   { path: '/cf-multi-modal-symptom-assessment', label: 'Multi-modal symptom assessment', icon: '✨' },

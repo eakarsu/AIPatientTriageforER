@@ -274,3 +274,9 @@ app.use('/api/gap-no-multi', require('./routes/gapFeat_no_multi'));
 app.use('/api/gap-no-webhooks-for-critical-alerts-to-pagers-phones', require('./routes/gapFeat_no_webhooks_for_critical_alerts_to_pagers_phones'));
 app.use('/api/gap-no-notifications-layer-dedicated-to-clinical-alert', require('./routes/gapFeat_no_notifications_layer_dedicated_to_clinical_alert'));
 app.use('/api/gap-no-file-upload-for-imaging-lab-attachments-visible', require('./routes/gapFeat_no_file_upload_for_imaging_lab_attachments_visible'));
+
+// === Custom Views (mounted BEFORE 404 fallback) ===
+app.use('/api/custom-views', require('./routes/customViews'));
+
+// 404 fallback for any unmatched /api/* route (kept LAST after all mounts)
+app.use('/api', (req, res) => res.status(404).json({ error: 'Not Found', path: req.originalUrl }));

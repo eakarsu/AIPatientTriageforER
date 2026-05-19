@@ -45,6 +45,7 @@ import GapNoMultiPage from './pages/GapNoMultiPage';
 import GapNoWebhooksForCriticalAlertsToPagersPhonesPage from './pages/GapNoWebhooksForCriticalAlertsToPagersPhonesPage';
 import GapNoNotificationsLayerDedicatedToClinicalAlertPage from './pages/GapNoNotificationsLayerDedicatedToClinicalAlertPage';
 import GapNoFileUploadForImagingLabAttachmentsVisiblePage from './pages/GapNoFileUploadForImagingLabAttachmentsVisiblePage';
+import CustomViewsPage from './pages/CustomViewsPage';
 function App() {
   const [user, setUser] = useState(null);
 
@@ -92,7 +93,8 @@ function App() {
           <Route path="/resource-predictor" element={<ResourcePredictorPage />} />
           <Route path="/med-safety" element={<MedSafetyPage />} />
           <Route path="/ai-predictive" element={<AIPredictivePage />} />
-          <Route path="*" element={<Navigate to="/" />} />
+          <Route path="/custom-views" element={<CustomViewsPage />} />
+          <Route path="*" element={<Navigate to="/" />}/>
         
           {/* // === Batch 06 Gaps & Frontend Mounts === */}
           <Route path="/cf-agentic-er-flow-optimization" element={<CFAgenticErFlowOptimizationPage />} />
