@@ -1,6 +1,18 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
-import { FiHome, FiUsers, FiActivity, FiHeart, FiAlertTriangle, FiList, FiUserCheck, FiFileText, FiClock, FiFolder, FiDroplet, FiPackage, FiLogOut as FiLogOutIcon, FiAlertCircle, FiGrid, FiTrendingUp, FiMonitor, FiCpu, FiZap, FiBarChart2, FiShield } from 'react-icons/fi';
+import { FiHome, FiUsers, FiActivity, FiHeart, FiAlertTriangle, FiList, FiUserCheck, FiFileText, FiClock, FiFolder, FiDroplet, FiPackage, FiLogOut as FiLogOutIcon, FiAlertCircle, FiGrid, FiTrendingUp, FiMonitor, FiCpu, FiZap, FiBarChart2, FiShield, FiDatabase, FiChevronDown, FiChevronRight } from 'react-icons/fi';
+
+const ehrNavItems = [
+  { path: '/ehr/encounters', label: 'Encounters' },
+  { path: '/ehr/allergies', label: 'Allergies' },
+  { path: '/ehr/problems', label: 'Problem List' },
+  { path: '/ehr/orders', label: 'Clinical Orders' },
+  { path: '/ehr/referrals', label: 'Referrals' },
+  { path: '/ehr/notes', label: 'Clinical Notes' },
+  { path: '/ehr/fhir', label: 'FHIR Resources' },
+  { path: '/ehr/rx', label: 'Prescriptions (eRx)' },
+  { path: '/ehr/imaging', label: 'Imaging Studies' },
+];
 
 const navItems = [
   { path: '/', icon: <FiHome />, label: 'Dashboard' },
@@ -21,6 +33,7 @@ const navItems = [
   { path: '/beds', icon: <FiGrid />, label: 'Bed Management' },
   { path: '/patient-flow', icon: <FiTrendingUp />, label: 'Patient Flow Analytics' },
   { path: '/esi-calculator', icon: <FiZap />, label: 'ESI Calculator' },
+  { path: '/stroke-door-to-needle', icon: <FiActivity />, label: 'Stroke Door-to-Needle' },
   { path: '/resource-predictor', icon: <FiBarChart2 />, label: 'Resource Predictor' },
   { path: '/med-safety', icon: <FiShield />, label: 'Medication Safety' },
   { path: '/ai-history', icon: <FiCpu />, label: 'AI History' },
@@ -48,6 +61,8 @@ const navItems = [
 export default function Layout({ user, onLogout, children }) {
   const navigate = useNavigate();
   const location = useLocation();
+  const isEhrActive = location.pathname.startsWith('/ehr');
+  const [ehrExpanded, setEhrExpanded] = useState(isEhrActive);
 
   return (
     <div className="app-layout">
@@ -64,6 +79,31 @@ export default function Layout({ user, onLogout, children }) {
               onClick={() => navigate(item.path)}
             >
               <span className="nav-icon">{item.icon}</span>
+              {item.label}
+            </div>
+          ))}
+
+          {/* EHR Group */}
+          <div
+            className={`nav-item ${isEhrActive ? 'active' : ''}`}
+            onClick={() => setEhrExpanded(e => !e)}
+            style={{ justifyContent: 'space-between', cursor: 'pointer' }}
+          >
+            <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
+              <span className="nav-icon"><FiDatabase /></span>
+              EHR Records
+            </div>
+            <span style={{ fontSize: 14, color: '#64748b' }}>
+              {ehrExpanded ? <FiChevronDown /> : <FiChevronRight />}
+            </span>
+          </div>
+          {ehrExpanded && ehrNavItems.map(item => (
+            <div
+              key={item.path}
+              className={`nav-item ${location.pathname === item.path ? 'active' : ''}`}
+              onClick={() => navigate(item.path)}
+              style={{ paddingLeft: 36, fontSize: 12 }}
+            >
               {item.label}
             </div>
           ))}

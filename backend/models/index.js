@@ -305,6 +305,9 @@ Discharge.belongsTo(Patient, { foreignKey: 'patientId' });
 Patient.hasMany(EmergencyAlert, { foreignKey: 'patientId' });
 EmergencyAlert.belongsTo(Patient, { foreignKey: 'patientId' });
 
+const ehr = require('./ehr');
+ehr.setupEhrAssociations(Patient);
+
 module.exports = {
   sequelize,
   User,
@@ -324,5 +327,14 @@ module.exports = {
   BedManagement,
   PatientFlow,
   AiResult,
-  AuditLog
+  AuditLog,
+  Encounter: ehr.Encounter,
+  Allergy: ehr.Allergy,
+  Problem: ehr.Problem,
+  ClinicalOrder: ehr.ClinicalOrder,
+  Referral: ehr.Referral,
+  ClinicalNote: ehr.ClinicalNote,
+  FhirResource: ehr.FhirResource,
+  Prescription: ehr.Prescription,
+  ImagingStudy: ehr.ImagingStudy
 };

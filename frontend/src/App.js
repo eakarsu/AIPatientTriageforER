@@ -25,6 +25,7 @@ import ESICalculatorPage from './pages/ESICalculatorPage';
 import ResourcePredictorPage from './pages/ResourcePredictorPage';
 import MedSafetyPage from './pages/MedSafetyPage';
 import AIPredictivePage from './pages/AIPredictivePage';
+import StrokeDoorToNeedlePage from './pages/StrokeDoorToNeedlePage';
 import Layout from './components/Layout';
 import './App.css';
 
@@ -46,6 +47,22 @@ import GapNoWebhooksForCriticalAlertsToPagersPhonesPage from './pages/GapNoWebho
 import GapNoNotificationsLayerDedicatedToClinicalAlertPage from './pages/GapNoNotificationsLayerDedicatedToClinicalAlertPage';
 import GapNoFileUploadForImagingLabAttachmentsVisiblePage from './pages/GapNoFileUploadForImagingLabAttachmentsVisiblePage';
 import CustomViewsPage from './pages/CustomViewsPage';
+import CodexCustomVizFeature from './pages/CodexCustomVizFeature';
+import CodexOperationsFeature from './pages/CodexOperationsFeature';
+
+import TimelineView from './pages/TimelineView';
+
+// === EHR Module Pages ===
+import EhrEncountersPage from './pages/ehr/EhrEncountersPage';
+import EhrAllergiesPage from './pages/ehr/EhrAllergiesPage';
+import EhrProblemsPage from './pages/ehr/EhrProblemsPage';
+import EhrOrdersPage from './pages/ehr/EhrOrdersPage';
+import EhrReferralsPage from './pages/ehr/EhrReferralsPage';
+import EhrNotesPage from './pages/ehr/EhrNotesPage';
+import EhrFhirPage from './pages/ehr/EhrFhirPage';
+import EhrRxPage from './pages/ehr/EhrRxPage';
+import EhrImagingPage from './pages/ehr/EhrImagingPage';
+
 function App() {
   const [user, setUser] = useState(null);
 
@@ -71,6 +88,10 @@ function App() {
     <Router>
       <Layout user={user} onLogout={handleLogout}>
         <Routes>
+        <Route path="/insights/timeline" element={<TimelineView />} />
+        <Route path="/codex/custom-viz" element={<CodexCustomVizFeature />} />
+        <Route path="/codex/operations" element={<CodexOperationsFeature />} />
+
           <Route path="/" element={<Dashboard />} />
           <Route path="/patients" element={<PatientsPage />} />
           <Route path="/triage" element={<TriagePage />} />
@@ -90,10 +111,22 @@ function App() {
           <Route path="/ai-history" element={<AIHistoryPage />} />
           <Route path="/er-board" element={<ERBoardPage />} />
           <Route path="/esi-calculator" element={<ESICalculatorPage />} />
+          <Route path="/stroke-door-to-needle" element={<StrokeDoorToNeedlePage />} />
           <Route path="/resource-predictor" element={<ResourcePredictorPage />} />
           <Route path="/med-safety" element={<MedSafetyPage />} />
           <Route path="/ai-predictive" element={<AIPredictivePage />} />
           <Route path="/custom-views" element={<CustomViewsPage />} />
+          {/* === EHR Module Routes === */}
+          <Route path="/ehr/encounters" element={<EhrEncountersPage />} />
+          <Route path="/ehr/allergies" element={<EhrAllergiesPage />} />
+          <Route path="/ehr/problems" element={<EhrProblemsPage />} />
+          <Route path="/ehr/orders" element={<EhrOrdersPage />} />
+          <Route path="/ehr/referrals" element={<EhrReferralsPage />} />
+          <Route path="/ehr/notes" element={<EhrNotesPage />} />
+          <Route path="/ehr/fhir" element={<EhrFhirPage />} />
+          <Route path="/ehr/rx" element={<EhrRxPage />} />
+          <Route path="/ehr/imaging" element={<EhrImagingPage />} />
+
           <Route path="*" element={<Navigate to="/" />}/>
         
           {/* // === Batch 06 Gaps & Frontend Mounts === */}

@@ -36,6 +36,17 @@ app.use('/api/auth', authRoutes);
 app.use('/api/ai', aiRoutes);
 app.use('/api/integrations', require('./routes/integrations'));
 
+// EHR feature routes
+app.use('/api/ehr/encounters', require('./routes/ehrFeat_encounters'));
+app.use('/api/ehr/allergies', require('./routes/ehrFeat_allergies'));
+app.use('/api/ehr/problems', require('./routes/ehrFeat_problemList'));
+app.use('/api/ehr/orders', require('./routes/ehrFeat_orders'));
+app.use('/api/ehr/referrals', require('./routes/ehrFeat_referrals'));
+app.use('/api/ehr/notes', require('./routes/ehrFeat_clinicalNotes'));
+app.use('/api/ehr/fhir', require('./routes/ehrFeat_hl7Fhir'));
+app.use('/api/ehr/rx', require('./routes/ehrFeat_eRx'));
+app.use('/api/ehr/imaging', require('./routes/ehrFeat_imaging'));
+
 // HIPAA Audit Logging - log every patient record view
 const patientRouter = createCrudRouter(Patient);
 const originalPatientGet = patientRouter.stack.find(l => l.route && l.route.path === '/:id' && l.route.methods.get);
@@ -260,6 +271,7 @@ app.use('/api/cf-multi-modal-symptom-assessment', require('./routes/customFeat02
 app.use('/api/cf-prediction-action-bundling', require('./routes/customFeat03_PredictionActionBundling'));
 app.use('/api/cf-sepsis-early-warning', require('./routes/customFeat04_SepsisEarlyWarning'));
 app.use('/api/cf-discharge-risk-stratification', require('./routes/customFeat05_DischargeRiskStratification'));
+app.use('/api/stroke-door-to-needle', require('./routes/strokeDoorToNeedle'));
 
 
 // === Batch 06 Gaps & Frontend Mounts ===
