@@ -9,6 +9,27 @@ export default function GapDischargeWithoutReadmissionPage() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
 
+  const sampleRequests = [
+      {
+          "label": "Scenario",
+          "value": "Run Discharge without '/readmission for a realistic customer case.\nContext: A mid-market operations team is under deadline pressure and needs an actionable recommendation.\nGoal: identify the best next steps, risks, assumptions, and expected business impact.\nOutput format: concise summary, prioritized actions, confidence level, and follow-up questions."
+      },
+      {
+          "label": "Data sample",
+          "value": "Analyze this Discharge without '/readmission data sample.\nRecords:\n- Item A: high priority, owner unassigned, due this week, customer impact high\n- Item B: medium priority, owner assigned, blocked by missing information\n- Item C: low priority, recurring pattern, possible automation candidate\nReturn structured findings, anomalies, recommendations, and a short implementation plan."
+      },
+      {
+          "label": "Executive review",
+          "value": "Prepare an executive review for Discharge without '/readmission.\nAudience: business owner and operations manager.\nInclude: what happened, why it matters, financial or operational impact, risks, and three decisions needed today.\nTone: professional, direct, and implementation-focused."
+      }
+  ];
+
+  const applySampleRequest = (value) => {
+    setInput(value);
+    setError(null);
+    setResult(null);
+  };
+
   const run = async () => {
     setLoading(true);
     setError(null);
@@ -39,6 +60,18 @@ export default function GapDischargeWithoutReadmissionPage() {
       <p style={{ color: '#9ca3af', marginBottom: 16 }}>Discharge without /readmission-risk (flag high-risk discharges for extra follow-up)</p>
       <div style={{ background: '#111827', padding: 16, borderRadius: 8, marginBottom: 12 }}>
         <label style={{ display: 'block', fontWeight: 600, marginBottom: 8 }}>Input / Prompt</label>
+        <div style={{ display: 'flex', flexWrap: 'wrap', gap: 8, marginBottom: 10 }}>
+          {sampleRequests.map((sample) => (
+            <button
+              key={sample.label}
+              type="button"
+              onClick={() => applySampleRequest(sample.value)}
+              style={{ padding: '6px 10px', background: '#374151', color: '#e5e7eb', border: '1px solid #4b5563', borderRadius: 6, cursor: 'pointer', fontSize: 12, fontWeight: 600 }}
+            >
+              {sample.label}
+            </button>
+          ))}
+        </div>
         <textarea
           value={input}
           onChange={(e) => setInput(e.target.value)}
