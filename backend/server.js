@@ -20,6 +20,9 @@ try { helmet = require('helmet'); } catch (e) { helmet = null; }
 
 const app = express();
 const PORT = process.env.BACKEND_PORT || 3001;
+if ((process.env.JWT_SECRET || '').length < 32 || !process.env.GOVERNANCE_TENANT_ID) {
+  throw new Error('JWT_SECRET (32+ characters) and GOVERNANCE_TENANT_ID are required');
+}
 
 // Security headers
 if (helmet) app.use(helmet());
@@ -34,7 +37,9 @@ app.use(express.json({ limit: '10mb' }));
 // Routes
 app.use('/api/auth', authRoutes);
 app.use('/api/ai', aiRoutes);
-app.use('/api/integrations', require('./routes/integrations'));
+if (process.env.ENABLE_GENERATED_ROUTES === 'true' && process.env.NODE_ENV !== 'production') {
+  app.use('/api/integrations', require('./routes/integrations'));
+}
 
 // EHR feature routes
 app.use('/api/ehr/encounters', require('./routes/ehrFeat_encounters'));
@@ -262,33 +267,20 @@ async function start() {
   }
 }
 
-start();
-
-
-// === Custom Feature Mounts (batch_06) ===
-app.use('/api/cf-agentic-er-flow-optimization', require('./routes/customFeat01_AgenticErFlowOptimization'));
-app.use('/api/cf-multi-modal-symptom-assessment', require('./routes/customFeat02_MultiModalSymptomAssessment'));
-app.use('/api/cf-prediction-action-bundling', require('./routes/customFeat03_PredictionActionBundling'));
-app.use('/api/cf-sepsis-early-warning', require('./routes/customFeat04_SepsisEarlyWarning'));
-app.use('/api/cf-discharge-risk-stratification', require('./routes/customFeat05_DischargeRiskStratification'));
-app.use('/api/stroke-door-to-needle', require('./routes/strokeDoorToNeedle'));
-
-
-// === Batch 06 Gaps & Frontend Mounts ===
-app.use('/api/gap-patients-without-patient', require('./routes/gapFeat_patients_without_patient'));
-app.use('/api/gap-resources-without-staffing', require('./routes/gapFeat_resources_without_staffing'));
-app.use('/api/gap-discharge-without-readmission', require('./routes/gapFeat_discharge_without_readmission'));
-app.use('/api/gap-backend-collapses-everything-into-crud-js', require('./routes/gapFeat_backend_collapses_everything_into_crud_js'));
-app.use('/api/gap-no-production', require('./routes/gapFeat_no_production'));
-app.use('/api/gap-no-real', require('./routes/gapFeat_no_real'));
-app.use('/api/gap-no-ambulance-ems-integration-arrival-notifications', require('./routes/gapFeat_no_ambulance_ems_integration_arrival_notifications'));
-app.use('/api/gap-no-multi', require('./routes/gapFeat_no_multi'));
-app.use('/api/gap-no-webhooks-for-critical-alerts-to-pagers-phones', require('./routes/gapFeat_no_webhooks_for_critical_alerts_to_pagers_phones'));
-app.use('/api/gap-no-notifications-layer-dedicated-to-clinical-alert', require('./routes/gapFeat_no_notifications_layer_dedicated_to_clinical_alert'));
-app.use('/api/gap-no-file-upload-for-imaging-lab-attachments-visible', require('./routes/gapFeat_no_file_upload_for_imaging_lab_attachments_visible'));
+app.use('/api/governed-er-triage', require('./governance'));
+if (process.env.ENABLE_GENERATED_ROUTES === 'true' && process.env.NODE_ENV !== 'production') {
+  app.use('/api/cf-agentic-er-flow-optimization', require('./routes/customFeat01_AgenticErFlowOptimization'));
+  app.use('/api/cf-multi-modal-symptom-assessment', require('./routes/customFeat02_MultiModalSymptomAssessment'));
+  app.use('/api/cf-prediction-action-bundling', require('./routes/customFeat03_PredictionActionBundling'));
+  app.use('/api/cf-sepsis-early-warning', require('./routes/customFeat04_SepsisEarlyWarning'));
+  app.use('/api/cf-discharge-risk-stratification', require('./routes/customFeat05_DischargeRiskStratification'));
+  app.use('/api/stroke-door-to-needle', require('./routes/strokeDoorToNeedle'));
+}
 
 // === Custom Views (mounted BEFORE 404 fallback) ===
 app.use('/api/custom-views', require('./routes/customViews'));
 
 // 404 fallback for any unmatched /api/* route (kept LAST after all mounts)
 app.use('/api', (req, res) => res.status(404).json({ error: 'Not Found', path: req.originalUrl }));
+
+start();

@@ -6,7 +6,7 @@ async function callOpenRouter(prompt, systemPrompt = 'You are an expert emergenc
   const model = process.env.OPENROUTER_MODEL || 'anthropic/claude-3-5-sonnet-20241022';
 
   if (!apiKey || apiKey === 'your_openrouter_api_key_here') {
-    return { result: 'AI service not configured. Please set OPENROUTER_API_KEY in .env file.', model, raw: null };
+    throw new Error('OPENROUTER_API_KEY is not configured');
   }
 
   const data = JSON.stringify({
@@ -39,7 +39,7 @@ async function callOpenRouter(prompt, systemPrompt = 'You are an expert emergenc
         try {
           const parsed = JSON.parse(body);
           if (parsed.error) {
-            resolve({ result: `AI Error: ${parsed.error.message}`, model, raw: parsed });
+            reject(new Error(parsed.error.message || 'AI provider rejected request'));
           } else {
             const content = parsed.choices?.[0]?.message?.content || 'No response from AI';
             resolve({
@@ -49,15 +49,11 @@ async function callOpenRouter(prompt, systemPrompt = 'You are an expert emergenc
               raw: parsed
             });
           }
-        } catch (e) {
-          resolve({ result: 'Failed to parse AI response', model, raw: body });
-        }
+        } catch (e) { reject(e); }
       });
     });
 
-    req.on('error', (e) => {
-      resolve({ result: `AI connection error: ${e.message}`, model, raw: null });
-    });
+    req.on('error', reject);
 
     req.write(data);
     req.end();
