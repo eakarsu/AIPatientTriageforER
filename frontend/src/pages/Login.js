@@ -1,6 +1,10 @@
 import React, { useState } from 'react';
 import API from '../services/api';
 
+const demoPassword = process.env.REACT_APP_ENABLE_DEMO_CREDENTIAL_AUTOFILL === 'true'
+  ? process.env.REACT_APP_DEMO_PASSWORD || ''
+  : '';
+
 export default function Login({ onLogin }) {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -23,10 +27,10 @@ export default function Login({ onLogin }) {
 
   const autofill = (role) => {
     const creds = {
-      admin: { email: 'admin@ertriage.com', password: 'password123' },
-      doctor: { email: 'doctor@ertriage.com', password: 'password123' },
-      nurse: { email: 'nurse@ertriage.com', password: 'password123' },
-      reception: { email: 'reception@ertriage.com', password: 'password123' }
+      admin: { email: process.env.REACT_APP_DEMO_EMAIL || 'admin@ertriage.com', password: demoPassword },
+      doctor: { email: 'doctor@ertriage.com', password: demoPassword },
+      nurse: { email: 'nurse@ertriage.com', password: demoPassword },
+      reception: { email: 'reception@ertriage.com', password: demoPassword }
     };
     setEmail(creds[role].email);
     setPassword(creds[role].password);
@@ -54,10 +58,10 @@ export default function Login({ onLogin }) {
           </button>
         </form>
         <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '8px', marginTop: '16px' }}>
-          <button className="autofill-btn" onClick={() => autofill('admin')}>Admin Login</button>
-          <button className="autofill-btn" onClick={() => autofill('doctor')}>Doctor Login</button>
-          <button className="autofill-btn" onClick={() => autofill('nurse')}>Nurse Login</button>
-          <button className="autofill-btn" onClick={() => autofill('reception')}>Reception Login</button>
+          <button disabled={!demoPassword} className="autofill-btn" onClick={() => autofill('admin')}>Admin Login</button>
+          <button disabled={!demoPassword} className="autofill-btn" onClick={() => autofill('doctor')}>Doctor Login</button>
+          <button disabled={!demoPassword} className="autofill-btn" onClick={() => autofill('nurse')}>Nurse Login</button>
+          <button disabled={!demoPassword} className="autofill-btn" onClick={() => autofill('reception')}>Reception Login</button>
         </div>
       </div>
     </div>
