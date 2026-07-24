@@ -27,7 +27,7 @@ export default function ERBoardPage() {
     fetchQueue();
 
     // Try WebSocket connection
-    const wsUrl = `ws://localhost:3001`;
+    const wsUrl = (process.env.REACT_APP_API_URL || 'http://localhost:3001').replace(/^http/, 'ws');
     try {
       const ws = new WebSocket(wsUrl);
       wsRef.current = ws;

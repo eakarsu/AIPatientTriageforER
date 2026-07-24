@@ -2,15 +2,22 @@ require('dotenv').config({ path: require('path').join(__dirname, '../../.env') }
 const bcrypt = require('bcryptjs');
 const { sequelize, User, Patient, TriageAssessment, VitalSign, SymptomAnalysis, PriorityQueue, DoctorAssignment, Treatment, WaitTime, MedicalHistory, LabOrder, Medication, Discharge, EmergencyAlert, BedManagement, PatientFlow } = require('../models');
 
+if (process.env.NODE_ENV === 'production' || process.env.ALLOW_DEMO_SEED !== 'true' || process.env.RESET_DATABASE !== '1' || process.env.SEED_DEMO_DATA !== '1') {
+  throw new Error('Destructive demo seed requires ALLOW_DEMO_SEED=true, RESET_DATABASE=1, and SEED_DEMO_DATA=1 outside production');
+}
+const seedEmail = process.env.DEMO_EMAIL || 'runtime-admin@example.com';
+const seedPassword = process.env.DEMO_SEED_PASSWORD || process.env.SEED_DEMO_PASSWORD || '';
+if (seedPassword.length < 12) throw new Error('DEMO_SEED_PASSWORD must contain at least 12 characters');
+
 async function seed() {
   try {
     await sequelize.sync({ force: true });
     console.log('Database reset and synced');
 
     // Users
-    const hashedPassword = await bcrypt.hash('password123', 10);
+    const hashedPassword = await bcrypt.hash(seedPassword, 10);
     await User.bulkCreate([
-      { email: 'admin@ertriage.com', password: hashedPassword, name: 'Dr. Sarah Admin', role: 'admin' },
+      { email: seedEmail, password: hashedPassword, name: process.env.DEMO_ADMIN_NAME || 'RuntimeAdmin', role: 'admin' },
       { email: 'doctor@ertriage.com', password: hashedPassword, name: 'Dr. James Wilson', role: 'doctor' },
       { email: 'nurse@ertriage.com', password: hashedPassword, name: 'Nurse Maria Garcia', role: 'nurse' },
       { email: 'reception@ertriage.com', password: hashedPassword, name: 'John Reception', role: 'receptionist' }
@@ -339,11 +346,7 @@ async function seed() {
     console.log('Patient flow seeded');
 
     console.log('\n✅ All data seeded successfully!');
-    console.log('Login credentials:');
-    console.log('  Admin: admin@ertriage.com / password123');
-    console.log('  Doctor: doctor@ertriage.com / password123');
-    console.log('  Nurse: nurse@ertriage.com / password123');
-    console.log('  Reception: reception@ertriage.com / password123');
+    console.log(`Verification user: ${seedEmail}`);
 
     process.exit(0);
   } catch (err) {

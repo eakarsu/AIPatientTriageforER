@@ -4,6 +4,7 @@ require('dotenv').config({ path: require('path').join(__dirname, '../../.env') }
 async function callOpenRouter(prompt, systemPrompt = 'You are an expert emergency medicine AI assistant. Provide detailed, professional medical assessments. Always respond with structured, actionable information.') {
   const apiKey = process.env.OPENROUTER_API_KEY;
   const model = process.env.OPENROUTER_MODEL || 'anthropic/claude-3-5-sonnet-20241022';
+  const baseUrl = new URL(process.env.OPENROUTER_BASE_URL || 'https://openrouter.ai/api/v1');
 
   if (!apiKey || apiKey === 'your_openrouter_api_key_here') {
     throw new Error('OPENROUTER_API_KEY is not configured');
@@ -21,8 +22,9 @@ async function callOpenRouter(prompt, systemPrompt = 'You are an expert emergenc
 
   return new Promise((resolve, reject) => {
     const options = {
-      hostname: 'openrouter.ai',
-      path: '/api/v1/chat/completions',
+      hostname: baseUrl.hostname,
+      port: baseUrl.port || 443,
+      path: `${baseUrl.pathname.replace(/\/$/, '')}/chat/completions`,
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -38,10 +40,11 @@ async function callOpenRouter(prompt, systemPrompt = 'You are an expert emergenc
       res.on('end', () => {
         try {
           const parsed = JSON.parse(body);
-          if (parsed.error) {
-            reject(new Error(parsed.error.message || 'AI provider rejected request'));
+          if (res.statusCode < 200 || res.statusCode >= 300 || parsed.error) {
+            reject(new Error(parsed.error?.message || 'AI provider rejected request'));
           } else {
-            const content = parsed.choices?.[0]?.message?.content || 'No response from AI';
+            const content = parsed.choices?.[0]?.message?.content;
+            if (!content) return reject(new Error('OpenRouter returned no message content'));
             resolve({
               result: content,
               model: parsed.model || model,
