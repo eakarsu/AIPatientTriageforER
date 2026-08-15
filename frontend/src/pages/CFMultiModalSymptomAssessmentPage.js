@@ -1,3 +1,4 @@
+import GeneratedAiResponse from './GeneratedAiResponse';
 // === Batch 06 Gaps & Frontend Mounts ===
 // Custom Feature: Multi-modal symptom assessment
 // Multi-modal symptom assessment: Combine audio (patient speech), video (facial grimacing analysis), vital trends; holistic triage score more accurate than ESI alone
@@ -93,7 +94,7 @@ export default function CFMultiModalSymptomAssessmentPage() {
       {result && (
         <div style={{ background: '#0b1220', padding: 16, borderRadius: 8 }}>
           <h3 style={{ fontSize: 16, fontWeight: 600, marginBottom: 8 }}>Result</h3>
-          <pre style={{ whiteSpace: 'pre-wrap', wordBreak: 'break-word', fontFamily: 'monospace', fontSize: 12, color: '#d1d5db' }}>{JSON.stringify(result, null, 2)}</pre>
+          <GeneratedAiResponse response={result} />
         </div>
       )}
     </div>

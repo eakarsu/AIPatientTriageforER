@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useCallback } from 'react';
+import GeneratedAiResponse from '../pages/GeneratedAiResponse';
 import API from '../services/api';
 import DataTable from './DataTable';
 import Modal from './Modal';
@@ -100,9 +101,7 @@ function AiVerbsPanel({ module, recordId, idField }) {
                 {result.error ? (
                   <span style={{ color: '#f87171' }}>{result.error}</span>
                 ) : (
-                  <pre style={{ whiteSpace: 'pre-wrap', wordBreak: 'break-word', fontFamily: 'inherit', fontSize: 13, lineHeight: 1.7 }}>
-                    {JSON.stringify(result.result || result, null, 2)}
-                  </pre>
+                  <GeneratedAiResponse response={result} />
                 )}
               </div>
             </div>

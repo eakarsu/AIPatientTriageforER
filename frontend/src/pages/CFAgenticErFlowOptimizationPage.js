@@ -1,3 +1,4 @@
+import GeneratedAiResponse from './GeneratedAiResponse';
 // === Batch 06 Gaps & Frontend Mounts ===
 // Custom Feature: Agentic ER flow optimization
 // Agentic ER flow optimization: Autonomous background process predicts bottlenecks 2-4 hours ahead; pre-stages resources; auto-escalates slow cases; coordinates with ICU/wards for discharge timing
@@ -93,7 +94,7 @@ export default function CFAgenticErFlowOptimizationPage() {
       {result && (
         <div style={{ background: '#0b1220', padding: 16, borderRadius: 8 }}>
           <h3 style={{ fontSize: 16, fontWeight: 600, marginBottom: 8 }}>Result</h3>
-          <pre style={{ whiteSpace: 'pre-wrap', wordBreak: 'break-word', fontFamily: 'monospace', fontSize: 12, color: '#d1d5db' }}>{JSON.stringify(result, null, 2)}</pre>
+          <GeneratedAiResponse response={result} />
         </div>
       )}
     </div>

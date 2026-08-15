@@ -279,6 +279,7 @@ if (process.env.ENABLE_GENERATED_ROUTES === 'true' && process.env.NODE_ENV !== '
 
 // === Custom Views (mounted BEFORE 404 fallback) ===
 app.use('/api/custom-views', require('./routes/customViews'));
+app.use('/api', require('./routes/generatedFeatures').router);
 
 // 404 fallback for any unmatched /api/* route (kept LAST after all mounts)
 app.use('/api', (req, res) => res.status(404).json({ error: 'Not Found', path: req.originalUrl }));
