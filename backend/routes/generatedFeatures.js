@@ -41,7 +41,7 @@ Use only facts supplied by the user. Clearly label assumptions and missing evide
 
 function parseContent(content) {
   if (typeof content !== 'string') return content;
-  const cleaned = content.replace(/^```(?:json)?\s*/i, '').replace(/```\s*$/, '').trim();
+  const cleaned = content.trim().replace(/^```(?:json)?\s*/i, '').replace(/```\s*$/, '').trim();
   try { return JSON.parse(cleaned); } catch { return content; }
 }
 
