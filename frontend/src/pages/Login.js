@@ -58,7 +58,7 @@ export default function Login({ onLogin }) {
           </button>
         </form>
         <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '8px', marginTop: '16px' }}>
-          <button disabled={!demoPassword} className="autofill-btn" onClick={() => autofill('admin')}>Admin Login</button>
+          <button disabled={!demoPassword} className="autofill-btn" onClick={() => autofill('admin')}>Auto Fill Demo Credentials</button>
           <button disabled={!demoPassword} className="autofill-btn" onClick={() => autofill('doctor')}>Doctor Login</button>
           <button disabled={!demoPassword} className="autofill-btn" onClick={() => autofill('nurse')}>Nurse Login</button>
           <button disabled={!demoPassword} className="autofill-btn" onClick={() => autofill('reception')}>Reception Login</button>
