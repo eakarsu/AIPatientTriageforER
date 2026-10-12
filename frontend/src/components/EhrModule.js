@@ -68,6 +68,14 @@ function AiVerbsPanel({ module, recordId, idField }) {
               placeholder="Optional additional context for the AI..."
               style={{ width: '100%', padding: '8px 12px', background: 'rgba(15,23,42,0.8)', border: '1px solid rgba(99,102,241,0.2)', borderRadius: 8, color: '#e2e8f0', fontSize: 13, fontFamily: 'inherit', resize: 'vertical', minHeight: 60 }}
             />
+            <div style={{ display: 'flex', flexWrap: 'wrap', gap: 8, marginTop: 8 }}>
+              {[
+                ['Clinical context', 'Review the selected record for clinically relevant facts, missing information, and a safe next step.'],
+                ['Workflow review', 'Review the selected record for workflow gaps, pending actions, and the responsible follow-up team.'],
+                ['Detailed review', 'Summarize the selected record, distinguish confirmed facts from uncertainty, and list questions to verify.'],
+              ].map(([label, value]) => <button key={label} type="button" className="btn-secondary" onClick={() => setPrompt(value)} disabled={loading}>Fill {label}</button>)}
+            </div>
+            <small>The selected record reference is retained. Review the example before running AI.</small>
           </div>
           <div style={{ display: 'flex', gap: 8 }}>
             <button
@@ -133,7 +141,7 @@ export default function EhrModule({ module }) {
       if (Array.isArray(data)) {
         setItems(data);
       } else {
-        setItems(data.data || []);
+        setItems(Array.isArray(data?.data) ? data.data : []);
         setPagination(data.pagination || { total: 0, totalPages: 1 });
       }
     } catch (e) {
@@ -150,7 +158,7 @@ export default function EhrModule({ module }) {
     const t = setTimeout(async () => {
       try {
         const { data } = await API.get(`/ehr/${module.slug}/search?q=${encodeURIComponent(val)}&page=1&limit=20`);
-        setItems(Array.isArray(data) ? data : (data.data || []));
+        setItems(Array.isArray(data) ? data : (Array.isArray(data?.data) ? data.data : []));
         setPagination(data.pagination || { total: 0, totalPages: 1 });
       } catch { fetchData(); }
     }, 350);

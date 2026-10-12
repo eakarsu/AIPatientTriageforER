@@ -1,6 +1,14 @@
 import React, { useState } from 'react';
 import API from '../services/api';
 import { toast } from 'react-toastify';
+import FullFieldPresets from '../components/FullFieldPresets';
+import AIResultDisplay from '../components/AIResultDisplay';
+
+const medPresets = [
+  { label: 'Beta blocker review', values: { proposedMedication: 'Metoprolol', proposedDosage: '25 mg twice daily', currentMedications: 'Lisinopril 10 mg daily', allergies: 'No known drug allergies', patientAge: '62', patientWeight: '78', patientConditions: 'Hypertension', } },
+  { label: 'Antibiotic review', values: { proposedMedication: 'Amoxicillin', proposedDosage: '500 mg every 8 hours', currentMedications: 'Atorvastatin 20 mg daily', allergies: 'Penicillin allergy reported', patientAge: '45', patientWeight: '70', patientConditions: 'Hyperlipidemia', } },
+  { label: 'Pain medicine review', values: { proposedMedication: 'Ibuprofen', proposedDosage: '400 mg every 8 hours', currentMedications: 'Apixaban 5 mg twice daily', allergies: 'No known drug allergies', patientAge: '71', patientWeight: '82', patientConditions: 'Atrial fibrillation', } },
+];
 
 const VERDICT_COLORS = { SAFE: '#22c55e', CAUTION: '#f59e0b', CONTRAINDICATED: '#ef4444' };
 const SEVERITY_COLORS = {
@@ -66,6 +74,8 @@ export default function MedSafetyPage() {
         <div style={{ background: '#1e293b', border: '1px solid #334155', borderRadius: '12px', padding: '24px' }}>
           <h3 style={{ color: '#e2e8f0', marginBottom: '20px', fontSize: '16px', fontWeight: 600 }}>Check Medication</h3>
           <form onSubmit={handleCheck} style={{ display: 'flex', flexDirection: 'column', gap: '14px' }}>
+            <FullFieldPresets value={form} onChange={next => setForm({ ...next, patientId: form.patientId })} presets={medPresets} disabled={loading} />
+            <p style={{ color: '#94a3b8', fontSize: 12 }}>Examples are fictional. Patient ID stays as selected; enter a real patient ID manually if needed.</p>
             <div>
               <label style={{ color: '#94a3b8', fontSize: '13px', display: 'block', marginBottom: '6px' }}>Patient ID (optional — auto-fills allergies & meds)</label>
               <input className="form-input" type="number" value={form.patientId} onChange={e => handleChange('patientId', e.target.value)} placeholder="Patient ID" />
@@ -180,7 +190,7 @@ export default function MedSafetyPage() {
             )}
 
             {/* Drug Interactions */}
-            {result.drug_interactions?.length > 0 && (
+            {Array.isArray(result.drug_interactions) && result.drug_interactions.length > 0 && (
               <div style={{ background: '#1e293b', border: '1px solid #334155', borderRadius: '12px', padding: '20px' }}>
                 <h4 style={{ color: '#e2e8f0', fontSize: '14px', fontWeight: 600, marginBottom: '12px' }}>
                   Drug Interactions ({result.drug_interactions.length})
@@ -245,7 +255,7 @@ export default function MedSafetyPage() {
             )}
 
             {/* Monitoring Requirements */}
-            {result.monitoring_requirements?.length > 0 && (
+            {Array.isArray(result.monitoring_requirements) && result.monitoring_requirements.length > 0 && (
               <div style={{ background: '#1e293b', border: '1px solid #334155', borderRadius: '12px', padding: '20px' }}>
                 <h4 style={{ color: '#e2e8f0', fontSize: '14px', fontWeight: 600, marginBottom: '10px' }}>Monitoring Requirements</h4>
                 <div style={{ display: 'flex', flexWrap: 'wrap', gap: '8px' }}>
@@ -260,7 +270,7 @@ export default function MedSafetyPage() {
             {result.side_effects && (
               <div style={{ background: '#1e293b', border: '1px solid #334155', borderRadius: '12px', padding: '20px' }}>
                 <h4 style={{ color: '#e2e8f0', fontSize: '14px', fontWeight: 600, marginBottom: '10px' }}>Side Effects</h4>
-                {result.side_effects.serious?.length > 0 && (
+                {Array.isArray(result.side_effects.serious) && result.side_effects.serious.length > 0 && (
                   <div style={{ marginBottom: '8px' }}>
                     <div style={{ color: '#ef4444', fontSize: '12px', fontWeight: 600, marginBottom: '4px' }}>SERIOUS</div>
                     <div style={{ display: 'flex', flexWrap: 'wrap', gap: '6px' }}>
@@ -268,7 +278,7 @@ export default function MedSafetyPage() {
                     </div>
                   </div>
                 )}
-                {result.side_effects.common?.length > 0 && (
+                {Array.isArray(result.side_effects.common) && result.side_effects.common.length > 0 && (
                   <div style={{ marginBottom: '8px' }}>
                     <div style={{ color: '#f59e0b', fontSize: '12px', fontWeight: 600, marginBottom: '4px' }}>COMMON</div>
                     <div style={{ display: 'flex', flexWrap: 'wrap', gap: '6px' }}>
@@ -280,7 +290,7 @@ export default function MedSafetyPage() {
             )}
 
             {/* Alternatives */}
-            {result.alternative_medications?.length > 0 && (
+            {Array.isArray(result.alternative_medications) && result.alternative_medications.length > 0 && (
               <div style={{ background: '#1e293b', border: '1px solid #334155', borderRadius: '12px', padding: '20px' }}>
                 <h4 style={{ color: '#e2e8f0', fontSize: '14px', fontWeight: 600, marginBottom: '10px' }}>Alternative Medications</h4>
                 <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
@@ -313,6 +323,7 @@ export default function MedSafetyPage() {
           </div>
         )}
       </div>
+      <AIResultDisplay result={result} loading={loading} />
     </div>
   );
 }

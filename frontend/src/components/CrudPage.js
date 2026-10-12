@@ -1,3 +1,5 @@
+import RecordDialog from './RecordDialog';
+import { AIResultValue } from './AIResultView';
 import React, { useState, useEffect } from 'react';
 import API from '../services/api';
 import DataTable from './DataTable';
@@ -25,7 +27,7 @@ export default function CrudPage({ title, apiPath, columns, formFields, detailFi
       if (Array.isArray(data)) {
         setItems(data);
       } else {
-        setItems(data.data || []);
+        setItems(Array.isArray(data?.data) ? data.data : []);
         setPagination(data.pagination || { total: 0, totalPages: 1 });
       }
     } catch (e) { toast.error(`Failed to load data`); }
@@ -89,9 +91,9 @@ export default function CrudPage({ title, apiPath, columns, formFields, detailFi
     );
   };
 
-  if (selected) {
+  if (selected && !showModal) {
     return (
-      <div>
+      <RecordDialog title={title} onClose={() => { setSelected(null); setAiResult(null); }}><div>
         <div className="page-header">
           <h1>{title} - Details</h1>
           <div className="header-actions">
@@ -116,7 +118,7 @@ export default function CrudPage({ title, apiPath, columns, formFields, detailFi
           </div>
         </div>
         <AIResultDisplay result={aiResult} loading={aiLoading} model={aiModel} />
-      </div>
+      </div></RecordDialog>
     );
   }
 

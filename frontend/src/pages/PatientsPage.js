@@ -22,7 +22,7 @@ export default function PatientsPage() {
       if (Array.isArray(data)) {
         setItems(data);
       } else {
-        setItems(data.data || []);
+        setItems(Array.isArray(data?.data) ? data.data : []);
         setPagination(data.pagination || { total: 0, totalPages: 1 });
       }
     } catch (e) { toast.error('Failed to load patients'); }

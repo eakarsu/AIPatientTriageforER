@@ -100,8 +100,8 @@ router.get('/', async (req, res) => {
       limit,
       offset,
       include: [
-        { model: Patient,   as: 'patient',   attributes: ['id', 'firstName', 'lastName'], required: false },
-        { model: Encounter, as: 'encounter',  attributes: ['id', 'chiefComplaint'],        required: false }
+        { model: Patient,   as: 'Patient',   attributes: ['id', 'firstName', 'lastName'], required: false },
+        { model: Encounter, as: 'Encounter',  attributes: ['id', 'chiefComplaint'],        required: false }
       ]
     });
 
@@ -119,8 +119,8 @@ router.get('/:id', async (req, res) => {
   try {
     const study = await ImagingStudy.findByPk(req.params.id, {
       include: [
-        { model: Patient,   as: 'patient',   required: false },
-        { model: Encounter, as: 'encounter',  required: false }
+        { model: Patient,   as: 'Patient',   required: false },
+        { model: Encounter, as: 'Encounter',  required: false }
       ]
     });
     if (!study) return res.status(404).json({ error: 'Imaging study not found' });
@@ -906,7 +906,7 @@ router.post('/ai/suggest-differential', imagingAiRateLimit, async (req, res) => 
   try {
     const { studyId, clinicalContext } = req.body;
     let study = null;
-    if (studyId) study = await ImagingStudy.findByPk(studyId, { include: [{ model: Patient, as: 'patient', required: false }] });
+    if (studyId) study = await ImagingStudy.findByPk(studyId, { include: [{ model: Patient, as: 'Patient', required: false }] });
 
     const prompt = `You are a radiologist AI. Generate a differential diagnosis based on this imaging study.
 
@@ -917,7 +917,7 @@ ${study ? `
 - Study Type: ${study.studyType}
 - Impression: ${study.impression || 'N/A'}
 - AI Findings: ${study.aiFindings || 'N/A'}
-- Patient Age: ${study.patient?.dateOfBirth ? 'Available' : 'Unknown'}
+- Patient Age: ${study.Patient?.dateOfBirth ? 'Available' : 'Unknown'}
 ` : JSON.stringify(req.body)}
 Clinical Context: ${clinicalContext || 'Not provided'}
 

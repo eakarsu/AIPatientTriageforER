@@ -1,6 +1,14 @@
 import React, { useState } from 'react';
 import API from '../services/api';
 import { toast } from 'react-toastify';
+import FullFieldPresets from '../components/FullFieldPresets';
+import AIResultDisplay from '../components/AIResultDisplay';
+
+const esiPresets = [
+  { label: 'Chest pain review', values: { chiefComplaint: 'Chest discomfort', symptoms: 'Illustrative adult reports chest pressure and nausea beginning one hour ago.', patientAge: '58', patientGender: 'Female', heartRate: '104', bloodPressureSystolic: '148', bloodPressureDiastolic: '92', temperature: '98.6', respiratoryRate: '22', oxygenSaturation: '96' } },
+  { label: 'Ankle injury review', values: { chiefComplaint: 'Ankle injury', symptoms: 'Illustrative adult reports ankle pain and swelling after a fall, without other symptoms.', patientAge: '29', patientGender: 'Male', heartRate: '82', bloodPressureSystolic: '122', bloodPressureDiastolic: '78', temperature: '98.4', respiratoryRate: '16', oxygenSaturation: '99' } },
+  { label: 'Fever review', values: { chiefComplaint: 'Fever and cough', symptoms: 'Illustrative older adult reports fever, cough, and fatigue for two days.', patientAge: '74', patientGender: 'Other', heartRate: '108', bloodPressureSystolic: '110', bloodPressureDiastolic: '68', temperature: '101.8', respiratoryRate: '24', oxygenSaturation: '93' } },
+];
 
 const ESI_COLORS = {
   1: '#dc2626',
@@ -80,6 +88,7 @@ export default function ESICalculatorPage() {
         <div style={{ background: '#1e293b', border: '1px solid #334155', borderRadius: '12px', padding: '24px' }}>
           <h3 style={{ color: '#e2e8f0', marginBottom: '20px', fontSize: '16px', fontWeight: 600 }}>Patient Information</h3>
           <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
+            <FullFieldPresets value={form} onChange={setForm} presets={esiPresets} disabled={loading} />
             <div>
               <label style={{ color: '#94a3b8', fontSize: '13px', display: 'block', marginBottom: '6px' }}>
                 Chief Complaint <span style={{ color: '#ef4444' }}>*</span>
@@ -225,7 +234,7 @@ export default function ESICalculatorPage() {
             </div>
 
             {/* Immediate Actions */}
-            {result.immediate_actions?.length > 0 && (
+            {Array.isArray(result.immediate_actions) && result.immediate_actions.length > 0 && (
               <div style={{ background: '#1e293b', border: '1px solid #334155', borderRadius: '12px', padding: '20px' }}>
                 <h4 style={{ color: '#e2e8f0', fontSize: '14px', fontWeight: 600, marginBottom: '10px' }}>Immediate Actions</h4>
                 <ul style={{ listStyle: 'none', padding: 0, display: 'flex', flexDirection: 'column', gap: '8px' }}>
@@ -240,7 +249,7 @@ export default function ESICalculatorPage() {
             )}
 
             {/* Resource Needs */}
-            {result.predicted_resource_needs?.length > 0 && (
+            {Array.isArray(result.predicted_resource_needs) && result.predicted_resource_needs.length > 0 && (
               <div style={{ background: '#1e293b', border: '1px solid #334155', borderRadius: '12px', padding: '20px' }}>
                 <h4 style={{ color: '#e2e8f0', fontSize: '14px', fontWeight: 600, marginBottom: '10px' }}>Predicted Resources</h4>
                 <div style={{ display: 'flex', flexWrap: 'wrap', gap: '8px' }}>
@@ -283,7 +292,7 @@ export default function ESICalculatorPage() {
             )}
 
             {/* Escalation Criteria */}
-            {result.escalation_criteria?.length > 0 && (
+            {Array.isArray(result.escalation_criteria) && result.escalation_criteria.length > 0 && (
               <div style={{ background: '#1e293b', border: '1px solid #f59e0b44', borderRadius: '12px', padding: '20px' }}>
                 <h4 style={{ color: '#f59e0b', fontSize: '14px', fontWeight: 600, marginBottom: '10px' }}>Escalation Criteria</h4>
                 <ul style={{ listStyle: 'none', padding: 0, display: 'flex', flexDirection: 'column', gap: '6px' }}>
@@ -298,6 +307,7 @@ export default function ESICalculatorPage() {
           </div>
         )}
       </div>
+      <AIResultDisplay result={result} loading={loading} />
     </div>
   );
 }

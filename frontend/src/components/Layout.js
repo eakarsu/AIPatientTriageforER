@@ -1,3 +1,4 @@
+import AIReportLibrary from "./AIReportLibrary";
 import React, { useState } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { FiHome, FiUsers, FiActivity, FiHeart, FiAlertTriangle, FiList, FiUserCheck, FiFileText, FiClock, FiFolder, FiDroplet, FiPackage, FiLogOut as FiLogOutIcon, FiAlertCircle, FiGrid, FiTrendingUp, FiMonitor, FiCpu, FiZap, FiBarChart2, FiShield, FiDatabase, FiChevronDown, FiChevronRight } from 'react-icons/fi';
@@ -118,7 +119,7 @@ export default function Layout({ user, onLogout, children }) {
           </div>
           <button className="logout-btn" onClick={onLogout}>Sign Out</button>
         </div>
-      </aside>
+      <AIReportLibrary /></aside>
       <main className="main-content">{children}</main>
     </div>
   );

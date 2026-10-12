@@ -85,8 +85,8 @@ router.get('/', async (req, res) => {
       limit,
       offset,
       include: [
-        { model: Patient, as: 'patient', attributes: ['id', 'firstName', 'lastName'] },
-        { model: Encounter, as: 'encounter', attributes: ['id', 'chiefComplaint'] }
+        { model: Patient, as: 'Patient', attributes: ['id', 'firstName', 'lastName'] },
+        { model: Encounter, as: 'Encounter', attributes: ['id', 'chiefComplaint'] }
       ]
     });
 
@@ -259,8 +259,8 @@ router.get('/:id', async (req, res) => {
   try {
     const order = await ClinicalOrder.findByPk(req.params.id, {
       include: [
-        { model: Patient, as: 'patient', attributes: ['id', 'firstName', 'lastName', 'dateOfBirth'] },
-        { model: Encounter, as: 'encounter', attributes: ['id', 'chiefComplaint', 'arrivalTime'] }
+        { model: Patient, as: 'Patient', attributes: ['id', 'firstName', 'lastName', 'dateOfBirth'] },
+        { model: Encounter, as: 'Encounter', attributes: ['id', 'chiefComplaint', 'arrivalTime'] }
       ]
     });
     if (!order) return res.status(404).json({ error: 'Order not found' });
@@ -563,7 +563,7 @@ router.post('/ai/check-medical-necessity', orderAiRateLimit, async (req, res) =>
     if (!orderId) return res.status(400).json({ error: 'orderId is required' });
 
     const order = await ClinicalOrder.findByPk(orderId, {
-      include: [{ model: Patient, as: 'patient', attributes: ['id', 'firstName', 'lastName', 'dateOfBirth', 'allergies'] }]
+      include: [{ model: Patient, as: 'Patient', attributes: ['id', 'firstName', 'lastName', 'dateOfBirth', 'allergies'] }]
     });
     if (!order) return res.status(404).json({ error: 'Order not found' });
 
@@ -572,7 +572,7 @@ Order: ${order.orderName} (${order.orderType})
 Details: ${order.orderDetails || 'None'}
 Reason for Order: ${order.reasonForOrder || 'Not specified'}
 Priority: ${order.priority}
-Patient Context: ${order.patient ? `${order.patient.firstName} ${order.patient.lastName}` : 'Unknown'}
+Patient Context: ${order.Patient ? `${order.Patient.firstName} ${order.Patient.lastName}` : 'Unknown'}
 
 Respond with JSON:
 {
@@ -1217,11 +1217,11 @@ router.post('/ai/recommend-prep-instructions', orderAiRateLimit, async (req, res
     if (orderId) {
       try {
         const order = await ClinicalOrder.findByPk(orderId, {
-          include: [{ model: Patient, as: 'patient', attributes: ['allergies'] }]
+          include: [{ model: Patient, as: 'Patient', attributes: ['allergies'] }]
         });
         if (order) {
           orderCtx = { orderName: order.orderName, orderType: order.orderType };
-          if (!patientAllergiesCtx && order.patient?.allergies) patientAllergiesCtx = order.patient.allergies;
+          if (!patientAllergiesCtx && order.Patient?.allergies) patientAllergiesCtx = order.Patient.allergies;
         }
       } catch (e) {}
     }

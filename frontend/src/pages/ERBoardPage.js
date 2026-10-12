@@ -15,7 +15,7 @@ export default function ERBoardPage() {
   const fetchQueue = async () => {
     try {
       const { data } = await API.get('/queue/live');
-      setQueue(data.queue || []);
+      setQueue(Array.isArray(data?.queue) ? data.queue : []);
       setLastUpdate(new Date().toLocaleTimeString());
     } catch (e) {
       // silent - WS may be providing data
@@ -40,7 +40,7 @@ export default function ERBoardPage() {
         try {
           const msg = JSON.parse(event.data);
           if (msg.type === 'queue_update') {
-            setQueue(msg.queue || []);
+            setQueue(Array.isArray(msg.queue) ? msg.queue : []);
             setLastUpdate(new Date().toLocaleTimeString());
             setLoading(false);
           }

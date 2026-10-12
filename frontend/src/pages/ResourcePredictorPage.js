@@ -1,6 +1,14 @@
 import React, { useState } from 'react';
 import API from '../services/api';
 import { toast } from 'react-toastify';
+import FullFieldPresets from '../components/FullFieldPresets';
+import AIResultDisplay from '../components/AIResultDisplay';
+
+const resourcePresets = [
+  { label: 'Routine morning', values: { currentStaff: '4 nurses, 2 physicians, 1 technician', expectedArrivals: '6 patients in the next 2 hours' } },
+  { label: 'Busy afternoon', values: { currentStaff: '5 nurses, 2 physicians, 2 technicians', expectedArrivals: '12 patients in the next 2 hours' } },
+  { label: 'Evening surge', values: { currentStaff: '3 nurses, 1 physician, 1 technician', expectedArrivals: '15 patients in the next 2 hours' } },
+];
 
 const INTENSITY_COLORS = {
   low: '#22c55e',
@@ -62,6 +70,7 @@ export default function ResourcePredictorPage() {
         marginBottom: '24px',
         flexWrap: 'wrap'
       }}>
+        <div style={{ flexBasis: '100%' }}><FullFieldPresets value={form} onChange={setForm} presets={resourcePresets} disabled={loading} /></div>
         <div>
           <label style={{ color: '#94a3b8', fontSize: '13px', display: 'block', marginBottom: '6px' }}>
             Current Staff on Duty
@@ -227,7 +236,7 @@ export default function ResourcePredictorPage() {
           )}
 
           {/* Supply Needs */}
-          {result.supply_needs?.length > 0 && (
+          {Array.isArray(result.supply_needs) && result.supply_needs.length > 0 && (
             <div style={{ background: '#1e293b', border: '1px solid #334155', borderRadius: '12px', padding: '20px' }}>
               <h4 style={{ color: '#e2e8f0', fontSize: '14px', fontWeight: 600, marginBottom: '12px' }}>Supply Requirements</h4>
               <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
@@ -284,7 +293,7 @@ export default function ResourcePredictorPage() {
           )}
 
           {/* Recommendations */}
-          {result.recommendations?.length > 0 && (
+          {Array.isArray(result.recommendations) && result.recommendations.length > 0 && (
             <div style={{
               gridColumn: '1 / -1',
               background: '#1e293b',
@@ -317,6 +326,7 @@ export default function ResourcePredictorPage() {
           )}
         </div>
       )}
+      <AIResultDisplay result={result} loading={loading} />
     </div>
   );
 }

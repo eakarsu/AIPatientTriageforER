@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import API from '../services/api';
 import { toast } from 'react-toastify';
+import AIResultView from '../components/AIResultView';
 
 export default function AIHistoryPage() {
   const [history, setHistory] = useState([]);
@@ -15,7 +16,7 @@ export default function AIHistoryPage() {
     setLoading(true);
     try {
       const { data } = await API.get(`/ai/history?page=${page}&limit=20`);
-      setHistory(data.data || []);
+      setHistory(Array.isArray(data?.data) ? data.data : []);
       setPagination(data.pagination || { total: 0, totalPages: 1 });
     } catch (e) {
       toast.error('Failed to load AI history');
@@ -107,18 +108,8 @@ export default function AIHistoryPage() {
               </span>
             </div>
             {expanded === entry.id && (
-              <div style={{
-                borderTop: '1px solid #334155',
-                padding: '16px',
-                background: '#0f172a',
-                whiteSpace: 'pre-wrap',
-                fontSize: '13px',
-                lineHeight: '1.6',
-                color: '#cbd5e1',
-                maxHeight: '400px',
-                overflowY: 'auto'
-              }}>
-                {entry.result}
+              <div style={{ borderTop: '1px solid #334155', padding: '16px' }}>
+                <AIResultView response={entry.result} title={endpointLabel(entry.endpoint)} model={entry.model} label="Saved AI analysis" />
               </div>
             )}
           </div>

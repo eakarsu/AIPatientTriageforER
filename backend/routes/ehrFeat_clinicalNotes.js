@@ -98,7 +98,7 @@ router.get('/', async (req, res) => {
       where,
       include: [
         { model: Patient, attributes: ['id', 'firstName', 'lastName'], required: false },
-        { model: Encounter, attributes: ['id', 'encounterType', 'admissionDate'], required: false }
+        { model: Encounter, attributes: ['id', 'encounterType', 'arrivalTime'], required: false }
       ],
       order: [['createdAt', 'DESC']],
       limit,
@@ -242,7 +242,7 @@ router.get('/by-patient/:patientId', async (req, res) => {
 
     const { count, rows } = await ClinicalNote.findAndCountAll({
       where: { patientId: req.params.patientId },
-      include: [{ model: Encounter, attributes: ['id', 'encounterType', 'admissionDate'], required: false }],
+      include: [{ model: Encounter, attributes: ['id', 'encounterType', 'arrivalTime'], required: false }],
       order: [['createdAt', 'DESC']],
       limit,
       offset
@@ -385,7 +385,7 @@ router.get('/:id', async (req, res) => {
     const note = await ClinicalNote.findByPk(req.params.id, {
       include: [
         { model: Patient, attributes: ['id', 'firstName', 'lastName'], required: false },
-        { model: Encounter, attributes: ['id', 'encounterType', 'admissionDate'], required: false }
+        { model: Encounter, attributes: ['id', 'encounterType', 'arrivalTime'], required: false }
       ]
     });
     if (!note) return res.status(404).json({ error: 'Clinical note not found' });

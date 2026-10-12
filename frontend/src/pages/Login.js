@@ -1,9 +1,10 @@
 import React, { useState } from 'react';
 import API from '../services/api';
 
-const demoPassword = process.env.REACT_APP_ENABLE_DEMO_CREDENTIAL_AUTOFILL === 'true'
-  ? process.env.REACT_APP_DEMO_PASSWORD || ''
-  : '';
+const demoCredentials = process.env.REACT_APP_ENABLE_DEMO_CREDENTIAL_AUTOFILL === 'true'
+  && process.env.REACT_APP_DEMO_EMAIL && process.env.REACT_APP_DEMO_PASSWORD
+  ? { email: process.env.REACT_APP_DEMO_EMAIL, password: process.env.REACT_APP_DEMO_PASSWORD }
+  : null;
 
 export default function Login({ onLogin }) {
   const [email, setEmail] = useState('');
@@ -25,15 +26,11 @@ export default function Login({ onLogin }) {
     setLoading(false);
   };
 
-  const autofill = (role) => {
-    const creds = {
-      admin: { email: process.env.REACT_APP_DEMO_EMAIL || 'admin@ertriage.com', password: demoPassword },
-      doctor: { email: 'doctor@ertriage.com', password: demoPassword },
-      nurse: { email: 'nurse@ertriage.com', password: demoPassword },
-      reception: { email: 'reception@ertriage.com', password: demoPassword }
-    };
-    setEmail(creds[role].email);
-    setPassword(creds[role].password);
+  const autofill = () => {
+    if (!demoCredentials) return;
+    setEmail(demoCredentials.email);
+    setPassword(demoCredentials.password);
+    setError('');
   };
 
   return (
@@ -57,11 +54,9 @@ export default function Login({ onLogin }) {
             {loading ? 'Signing in...' : 'Sign In'}
           </button>
         </form>
-        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '8px', marginTop: '16px' }}>
-          <button disabled={!demoPassword} className="autofill-btn" onClick={() => autofill('admin')}>Auto Fill Demo Credentials</button>
-          <button disabled={!demoPassword} className="autofill-btn" onClick={() => autofill('doctor')}>Doctor Login</button>
-          <button disabled={!demoPassword} className="autofill-btn" onClick={() => autofill('nurse')}>Nurse Login</button>
-          <button disabled={!demoPassword} className="autofill-btn" onClick={() => autofill('reception')}>Reception Login</button>
+        <div style={{ marginTop: '16px' }}>
+          <button type="button" disabled={!demoCredentials || loading} className="autofill-btn" onClick={autofill}>Fill Demo Credentials</button>
+          {!demoCredentials && <p role="status">Demo autofill is unavailable because frontend demo credentials are not configured.</p>}
         </div>
       </div>
     </div>

@@ -25,7 +25,8 @@ if ((process.env.JWT_SECRET || '').length < 32 || !process.env.GOVERNANCE_TENANT
 }
 
 // Security headers
-if (helmet) app.use(helmet());
+// Allow inline event-handler attributes (onclick/onsubmit) while keeping the rest of the default CSP.
+if (helmet) app.use(helmet({ contentSecurityPolicy: { directives: { scriptSrcAttr: ["'unsafe-inline'"] } } }));
 
 // CORS
 app.use(cors({
@@ -282,6 +283,14 @@ app.use('/api/custom-views', require('./routes/customViews'));
 app.use('/api', require('./routes/generatedFeatures').router);
 
 // 404 fallback for any unmatched /api/* route (kept LAST after all mounts)
+
+// Advisory AI reports only; native execution and approval routes stay unchanged.
+const aiWorkspaceSupport = require("./aiWorkspaceAdapters.cjs");
+const aiWorkspaceDatabase = aiWorkspaceSupport.sequelizeQueryClient(require("./config/database.js"));
+app.use('/api/report-workspace', require("./aiWorkspace.cjs").createAIWorkspaceRouter({
+  pool: aiWorkspaceDatabase, authenticateToken: require("./middleware/auth.js"),
+  aiRateLimiter: aiWorkspaceSupport.createWorkspaceLimiter(), features: require("./aiWorkspaceFeatures.json"),
+}));
 app.use('/api', (req, res) => res.status(404).json({ error: 'Not Found', path: req.originalUrl }));
 
 start();
