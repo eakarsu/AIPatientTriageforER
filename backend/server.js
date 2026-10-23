@@ -38,6 +38,7 @@ app.use(express.json({ limit: '10mb' }));
 // Routes
 app.use('/api/auth', authRoutes);
 app.use('/api/ai', aiRoutes);
+app.use('/api/feature-pack', require('./routes/featurePack')(require('./middleware/auth')));
 if (process.env.ENABLE_GENERATED_ROUTES === 'true' && process.env.NODE_ENV !== 'production') {
   app.use('/api/integrations', require('./routes/integrations'));
 }
